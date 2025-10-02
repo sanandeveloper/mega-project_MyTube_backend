@@ -81,6 +81,8 @@ import { User } from "../models/user.model.js";
   
     const {id}=req.params
 
+    console.log("single video id",id)
+
     const video= await Video.findById(id).populate("owner", "avatar fullName")
   if (!video) {
         throw new ApiError(404,"video not found")
