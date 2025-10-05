@@ -18,3 +18,16 @@ const asyncHandler = (requestHandler) => {
 };
 
 export { asyncHandler };
+
+
+
+// let firstNumber=10
+// let secondNumber=20
+// function sum(a,b) {
+//   return a+b
+// }
+
+// sum(firstNumber,secondNumber)
+
+
+

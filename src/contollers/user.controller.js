@@ -354,10 +354,11 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     throw new ApiError(400, "username not found");
   }
 
-   const loggedInUserId = req.user?._id ? new mongoose.Types.ObjectId(req.user._id) : null;
+   const loggedInUserId = req.user?._id ? new mongoose.Types.ObjectId(req.user?._id) : null
+   console.log("loggedin user id")
 
 
-  const channel = await User.aggregate([
+  const channel= await User.aggregate([
     {
       $match: {
         username: username,
