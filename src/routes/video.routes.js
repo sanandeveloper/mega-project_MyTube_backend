@@ -1,7 +1,7 @@
 
 import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
-import { deleteLike, getAllvideo, getsingleVideo, likeVideo, publishVideo } from "../contollers/video.controller.js";
+import { deleteLike, getAllvideo, getsingleVideo, getUserVideoCount, likeVideo, publishVideo } from "../contollers/video.controller.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 
 
@@ -23,6 +23,7 @@ videoRouter.route("/get-video").get(getAllvideo)
 videoRouter.route("/:id").get(getsingleVideo)
 videoRouter.route("/like/:id").get(verifyJwt,likeVideo)
 videoRouter.route("/deletelike/:id").delete(verifyJwt,deleteLike)
+videoRouter.route("/countVideo/:id").get(verifyJwt,getUserVideoCount)
 
 
 

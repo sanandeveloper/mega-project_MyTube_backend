@@ -147,4 +147,27 @@ const deleteLike = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "user unliked succesfully"));
 });
 
-export { publishVideo, getAllvideo, getsingleVideo, likeVideo, deleteLike };
+const getUserVideoCount = asyncHandler(async(req,res)=>{
+
+  const {id}=req.params
+  console.log("videoid...",id)
+
+  if (!id) {
+    throw new ApiError(404,"user id not found")
+  }
+
+  const countVideos= await Video.find({owner:id}).populate("owner", "username avatar")
+
+
+  if (!countVideos) {
+     throw new ApiError(404,"video not found or something went wrong")
+  }
+
+  return res.status(200).json( new ApiResponse(200,countVideos,"user video count succesfully"))
+
+
+
+})
+
+
+export {getUserVideoCount, publishVideo, getAllvideo, getsingleVideo, likeVideo, deleteLike };
