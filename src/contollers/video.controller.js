@@ -55,20 +55,24 @@ const publishVideo = asyncHandler(async (req, res) => {
 
 const getAllvideo = asyncHandler(async (req, res) => {
   
-  const page= req.query.page
-  const limit= req.query.limit
+  const {page,limit,search=""}= req.query
+  
   console.log("pages",page)
   console.log("limits",limit)
+  console.log("searchtext",search)
    const pages=Number(page)
    const limits=Number(limit)
    const skip=(pages-1)*limits
 
    const totalVideos= await Video.countDocuments()
+    const searchFilter = search
+    ? { title: { $regex: search, $options: "i" } }
+    : {};
 
    const totalpages= Math.ceil(totalVideos/limit)
    console.log("total pages",totalpages)
 
-  const videos = await Video.find()
+  const videos = await Video.find(searchFilter)
     .populate("owner", "fullName avatar username").sort({"createdAt":-1}).skip(skip).limit(limits)
   
 
