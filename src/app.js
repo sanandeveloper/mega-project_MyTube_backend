@@ -33,8 +33,8 @@ import videoRouter from "./routes/video.routes.js";
 app.use("/api/v1/video", videoRouter);
 import { subsRoute } from "./routes/subscriber.routes.js";
 app.use("/api/v1/subscriber", subsRoute);
-app.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.log(`🚀 Server is running on port ${PORT}`);
+// });
 
 export default app;
