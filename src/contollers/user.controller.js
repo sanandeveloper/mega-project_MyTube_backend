@@ -342,7 +342,7 @@ const chnageCoverImage = asyncHandler(async (req, res) => {
   if (!user) {
     throw new ApiError(400, "user not found");
   }
-
+  n;
   return res
     .status(200)
     .json(new ApiResponse(200, user, "cover image changed successfully"));
@@ -351,7 +351,7 @@ const chnageCoverImage = asyncHandler(async (req, res) => {
 const getUserChannelProfile = asyncHandler(async (req, res) => {
   const { username } = req.params;
 
-  console.log("req.user.id",req.user._id)
+  console.log("req.user.id", req.user._id);
 
   console.log("username", username);
 
@@ -359,97 +359,88 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     throw new ApiError(400, "username not found");
   }
 
+  const channel = await User.aggregate([
+    {
+      $match: {
+        username: username,
+      },
+    },
+    {
+      $lookup: {
+        from: "subscriptions",
+        localField: "_id",
+        foreignField: "channel",
+        as: "subscriber",
+      },
+    },
+    {
+      $lookup: {
+        from: "subscriptions",
+        localField: "_id",
+        foreignField: "subscriber",
+        as: "subscribedTo",
+      },
+    },
+    {
+      $lookup: {
+        from: "videos",
+        localField: "_id",
+        foreignField: "owner",
+        as: "userVideos",
+      },
+    },
 
+    {
+      $addFields: {
+        channelSubscriber: {
+          $size: "$subscriber",
+        },
+        channelSubscribedTo: {
+          $size: "$subscribedTo",
+        },
+        allUserVideos: {
+          $size: "$userVideos",
+        },
 
- const channel = await User.aggregate([
-  {
-    $match: {
-      username: username,
-    },
-  },
-  {
-    $lookup: {
-      from: "subscriptions",
-      localField: "_id",
-      foreignField: "channel",
-      as: "subscriber",
-    },
-  },
-  {
-    $lookup: {
-      from: "subscriptions",
-      localField: "_id",
-      foreignField: "subscriber",
-      as: "subscribedTo",
-    },
-  },
-  {
-    $lookup: {
-      from: "videos",
-      localField: "_id",
-      foreignField: "owner",
-      as: "userVideos",
-    },
-  },
-  {
-    $lookup: {
-      from: "likes", // Assuming you have a likes collection
-      localField: "userVideos._id",
-      foreignField: "video",
-      as: "userTotalLikes",
-    },
-  },
-  {
-    $addFields: {
-      channelSubscriber: {
-        $size: "$subscriber",
-      },
-      channelSubscribedTo: {
-        $size: "$subscribedTo",
-      },
-      allUserVideos: {
-        $size: "$userVideos",
-      },
-      allLikedUser: {
-        $size: "$userTotalLikes",
-      },
-      isSubscribed: {
-        $cond: {
-          if: {
-            $in: [new mongoose.Types.ObjectId(req.user?._id), "$subscriber.subscriber"],
+        isSubscribed: {
+          $cond: {
+            if: {
+              $in: [
+                new mongoose.Types.ObjectId(req.user?._id),
+                "$subscriber.subscriber",
+              ],
+            },
+            then: true,
+            else: false,
           },
-          then: true,
-          else: false,
         },
       },
     },
-  },
-  {
-    $project: {
-      fullName: 1,
-      username: 1,
-      avatar: 1,
-      channelSubscriber: 1,
-      channelSubscribedTo: 1,
-      isSubscribed: 1,
-      email: 1,
-      coverImage: 1,
-      allUserVideos: 1,
-      allLikedUser: 1,
+    {
+      $project: {
+        fullName: 1,
+        username: 1,
+        avatar: 1,
+        channelSubscriber: 1,
+        channelSubscribedTo: 1,
+        isSubscribed: 1,
+        email: 1,
+        coverImage: 1,
+        allUserVideos: 1,
+        allLikedUser: 1,
+      },
     },
-  },
-]);
+  ]);
 
-// Fix the empty array check
-if (!channel || channel.length === 0) {
-  throw new ApiError(400, "channel does not exist");
-}
+  // Fix the empty array check
+  if (!channel || channel.length === 0) {
+    throw new ApiError(400, "channel does not exist");
+  }
 
-return res
-  .status(200)
-  .json(new ApiResponse(200, channel, "channel fetched successfully")); // Return first element
-
-})
+  return res
+    .status(200)
+    .json(new ApiResponse(200, channel, "channel fetched successfully")); // Return first element
+});
 const removeAvatar = asyncHandler(async (req, res) => {
   const user = await User.findByIdAndUpdate(
     req.user?._id,
@@ -470,7 +461,6 @@ const removeAvatar = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, {}, "avatar remove succesffuly"));
 });
-
 
 const getWatchHistory = asyncHandler(async (req, res) => {
   const user = await User.aggregate([
