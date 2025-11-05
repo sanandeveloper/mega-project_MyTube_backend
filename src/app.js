@@ -22,6 +22,10 @@ app.use(cookieParser());
 app.use(express.static("public"));
 
 console.log("hello world");
+app.get("/",(req,res)=>{
+
+res.send("hello wolrd")
+})
 
 app.use("/api/v1/users", router);
 
