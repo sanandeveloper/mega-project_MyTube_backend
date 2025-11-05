@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import router from "./routes/user.routes.js";
 import dotenv from "dotenv"
 dotenv.config()
-
+// const PORT = process.env.PORT || 7000;
 
 
 const app = express();
@@ -29,5 +29,9 @@ import videoRouter from "./routes/video.routes.js";
 app.use("/api/v1/video",videoRouter)
 import { subsRoute } from "./routes/subscriber.routes.js";
 app.use("/api/v1/subscriber",subsRoute)
+// app.listen(PORT,()=>{
+
+//   console.log("APP IS RUNNING ON THIS PORT")
+// })
 
 export default app
